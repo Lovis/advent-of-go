@@ -6,7 +6,8 @@ var data = []int{1,0,0,3,1,1,2,3,1,3,4,3,1,5,0,3,2,9,1,19,1,19,5,23,1,23,6,27,2,
 
 func main() {
 
-  part2()
+  noun, verb := part2()
+  fmt.Println("the answer is", noun, verb)
 }
 
 func part1() {
@@ -51,58 +52,48 @@ func part1() {
   fmt.Println(data)
 }
 
-func part2() {
-  data[1] = 12
-  data[2] = 2
+func part2() (noun int, verb int) {
+  for noun := 0; noun < 100; noun++ {
+    for verb := 0; verb < 100; verb++ {
+      modData := make([]int, len(data))
+      copy(modData, data)
 
-  fmt.Println(data)
-  i := 0
-  for {
-    fmt.Println(i, data[i])
-    if (i >= len(data)) {
-      break
-    }
-    if (data[i] == 99) {
-      fmt.Println("found a 99:", i)
-      break
-    }
-    if (data[i] == 1 || data[i] == 2) {
-      fmt.Println("found a 1 or 2", data[i])
-      fmt.Println("appending!", data[i], "i", data[i]+3)
+      modData[1] = noun
+      modData[2] = verb
 
-      if (i+3 <= len(data)) {
-        fmt.Println("code serie", data[i], data[i+1], data[i+2], data[i+3])
-        prev := data[data[i+3]]
-        fmt.Println("previous value", prev)
-        if (data[i] == 1) {
-          data[data[i+3]] = data[data[i+1]] + data[data[i+2]]
-          fmt.Println("new value", data[data[i+3]])
-          fmt.Println(data)
-        }
-        if (data[i] == 2) {
-          fmt.Println(data[data[i + 2]], data[data[i + 21]])
-          data[data[i+3]] = data[data[i+1]] * data[data[i+2]]
-          fmt.Println("new value", data[data[i+3]])
-          fmt.Println(data)
+      i := 0
+      for {
+        fmt.Println(noun, verb, i)
+        if (i >= len(modData)) {
+          break
         }
 
-        if (data[data[i+3]] == 19690720) {
-          fmt.Println("code serie producing 19690720", data[i], data[i+1], data[i+2], data[i+3], 100 * data[data[i+1]] + data[data[i+2]])
+        if (modData[i] == 99) {
+          fmt.Println("found a 99:", i)
+          break
         }
-        fmt.Println("restore", data[data[i+3]], "to prev:", prev)
-        data[data[i+3]] = prev
-        fmt.Println(data)
-        i=i+(4 * data[i])
-        continue
+        if (modData[i] == 1 || modData[i] == 2) {
+          if (i+3 <= len(modData)) {
+            fmt.Println("code serie", modData[i], modData[i+1], modData[i+2], modData[i+3])
+            if (modData[i] == 1) {
+              modData[modData[i+3]] = modData[modData[i+1]] + modData[modData[i+2]]
+            }
+            if (modData[i] == 2) {
+              modData[modData[i+3]] = modData[modData[i+1]] * modData[modData[i+2]]
+            }
+            i=i+4
+            continue
+          }
+        }
+      }
+
+      fmt.Println(modData)
+      fmt.Println(modData[0])
+      if (modData[0] == 19690720) {
+        fmt.Println("found the magic number", noun, verb, modData)
+        return noun, verb
       }
     }
-
-    if (i < len(data)) {
-      fmt.Println("reached end, incrementing by 1")
-      i++
-    }
   }
-
-  fmt.Println(data)
-  fmt.Println(data[0])
+  return 99,99
 }
