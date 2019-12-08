@@ -19,7 +19,7 @@ var coordsLeft []Coords
 var coordsRight []Coords
 
 type Coords struct {
-	x, y int
+	x, y, step int
 }
 
 func calcDistance(coords []Coords) (smallest int) {
@@ -35,9 +35,31 @@ func calcDistance(coords []Coords) (smallest int) {
 	return smallest
 }
 
+func calcDistanceWithSteps(coords []Coords) (smallest int) {
+	// traverse the list, find the smallest
+	smallest = coords[0].step
+	for _, v := range coords {
+		if (v.step < smallest) {
+			smallest = v.step
+		}
+	}
+	return smallest
+}
+
 func keep(point Coords, coordsRight []Coords) (bool){
 	for _, v := range coordsRight {
 		if (point.x == v.x && point.y == v.y) {
+			return true
+		} 
+	}
+	return false
+}
+
+func keepAndSumSteps(point *Coords, coordsRight []Coords) (bool){
+	for _, v := range coordsRight {
+		if (point.x == v.x && point.y == v.y) {
+			point.step += v.step
+			fmt.Println("point with added", point)
 			return true
 		} 
 	}
@@ -48,8 +70,8 @@ func findIntersections(coordsLeft []Coords, coordsRight []Coords) []Coords {
 	var intersections []Coords
 	for _, v := range coordsLeft {
 		// fmt.Println(i, v, coordsRight[i])
-		if (keep(v, coordsRight)) {
-			// fmt.Println("match:", v)
+		if (keepAndSumSteps(&v, coordsRight)) {
+			fmt.Println("match:", v)
 			intersections = append(intersections, v)
 		}
 	}
@@ -60,7 +82,7 @@ func findIntersections(coordsLeft []Coords, coordsRight []Coords) []Coords {
 func parse(input []string, coords []Coords) ([]Coords) {
 	// parse and create array of coords
 	// fmt.Println("len input", len(input))
-	point := Coords{0, 0}
+	point := Coords{0, 0, 0}
 	for i := 0; i < len(input); i++ {
 		var instruction = input[i]
 		var direction = string(instruction[0])
@@ -82,8 +104,8 @@ func parse(input []string, coords []Coords) ([]Coords) {
 				point.y -= 1
 			}
 
-			newCoord := Coords{point.x,point.y}
-			// fmt.Println("new coord", newCoord)
+			newCoord := Coords{point.x,point.y, len(coords)+1}
+			fmt.Println("new coord", newCoord)
 			coords = append(coords, newCoord)
 		}
 	}
@@ -98,10 +120,13 @@ func main() {
 	//fmt.Println("coordsRight: ", coordsRight)
 
 	intersections := findIntersections(coordsLeft, coordsRight)
-	// fmt.Println("intersections", intersections)
+	fmt.Println("intersections", intersections)
 
 	smallest := calcDistance(intersections)
 	fmt.Println("smallest manhattan: ", smallest)
+
+	smallestPt2 := calcDistanceWithSteps(intersections)
+	fmt.Println("smallest by steps: ", smallestPt2)
 	// extend to two full arrays of cells (x,y)
 	// find the common cells
 	// measure how far they are from origo
