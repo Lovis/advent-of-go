@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 var left = []string{"R8","U5","L5","D3"}
 var right = []string{"U7","R6","D4","L4"}
@@ -13,22 +16,25 @@ type Coords struct {
 }
 
 
-func parse(input []string, coordsLeft []Coords) {
+func parse(input []string, coords []Coords) ([]Coords) {
 	// parse and create array of coords
 	for i := 0; i < 2; i++ {
 		fmt.Println("first loop", i, len(input))
 		var instruction = input[i]
 		fmt.Println("instruction", instruction)
 		var direction = string(instruction[0])
-		var steps = int(instruction[1])
+		steps, err := strconv.Atoi(string(instruction[1]))
+		if err != nil {
+			break
+		}
 		fmt.Println("directions", direction, "steps", steps, "unparsed", instruction[1])
 		for j := 0; j < steps; j++ {
 			fmt.Println("here", i, "and", i)
 			var x = 0
 			var y = 0
-			if (len(coordsLeft) > 0) {
-				x = int(coordsLeft[len(coordsLeft)-1].x)
-				y = int(coordsLeft[len(coordsLeft)-1].y)
+			if (len(coords) > 0) {
+				x = int(coords[len(coords)-1].x)
+				y = int(coords[len(coords)-1].y)
 			}
 			switch direction {
 			case "R":
@@ -43,14 +49,14 @@ func parse(input []string, coordsLeft []Coords) {
 
 			newCoord := Coords{x,y}
 			fmt.Println("new coord", newCoord)
-			coordsLeft = append(coordsLeft, newCoord)
+			coords = append(coords, newCoord)
 		}
 	}
-	fmt.Println("coords", coordsLeft)
+	return coords
 }
 func main() {
 	fmt.Println("here we go")
-	parse(left, coordsLeft)
+	coordsLeft = parse(left, coordsLeft)
 	fmt.Println("coords: ", coordsLeft)
 	// extend to two full arrays of cells (x,y)
 	// find the common cells
