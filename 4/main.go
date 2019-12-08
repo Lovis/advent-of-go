@@ -34,14 +34,21 @@ func hasDouble(number int) (bool) {
 }
 
 func main() {
-	fmt.Println("Puzzle 4")
-	fmt.Println("has double? ", hasDouble(123456))
-	fmt.Println("has double? ", hasDouble(123356))
-	fmt.Println("has double? ", hasDouble(153356))
+	// fmt.Println("Puzzle 4")
+	// fmt.Println("has double? ", hasDouble(123456))
+	// fmt.Println("has double? ", hasDouble(123356))
+	// fmt.Println("has double? ", hasDouble(153356))
 
-	fmt.Println("has double? ", hasDouble(111111))
-	fmt.Println("has double? ", hasDouble(223450))
-	fmt.Println("has double? ", hasDouble(123789))
-	// config := Limit{136760, 595730}
+	// fmt.Println("has double? ", hasDouble(111111))
+	// fmt.Println("has double? ", hasDouble(223450))
+	// fmt.Println("has double? ", hasDouble(123789))
+	config := Limit{136760, 595730}
 
+	count := 0
+	for i := config.lower; i < config.upper; i++ {
+		if (hasDouble(i)) {
+			count++
+		}
+	}
+	fmt.Println("number of combinations", count)
 }
