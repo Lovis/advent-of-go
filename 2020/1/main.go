@@ -207,6 +207,9 @@ var input = [200]int{
 func makes2020(a int, b int) bool {
 	return a+b == 2020
 }
+func part2makes2020(a int, b int, c int) bool {
+	return a+b+c == 2020
+}
 
 func find2020() (int, int) {
 	a, b := 0, 0
@@ -229,9 +232,45 @@ func find2020() (int, int) {
 	return a, b
 }
 
-func main() {
+func part2find2020() (int, int, int) {
+	a, b, c := 0, 0, 0
+	for first := 0; first < len(input); first++ {
+		if a != 0 && b != 0 && c != 0 {
+			break
+		}
+		for second := 0; second < len(input); second++ {
+			for i := 0; i < len(input); i++ {
+
+				// avoid suming oneself
+				if first == second || second == i || first == i {
+					continue
+				} else if part2makes2020(input[first], input[second], input[i]) {
+					a = input[first]
+					b = input[second]
+					c = input[i]
+					break
+				}
+			}
+		}
+	}
+	return a, b, c
+}
+
+func part1() {
 	fmt.Printf("Hello %d \n", len(input))
 	a, b := find2020()
 
 	fmt.Printf("found them: %d %d. their sum: %d \n", a, b, a*b)
+}
+
+func part2() {
+	fmt.Printf("Hello part 2 %d \n", len(input))
+	a, b, c := part2find2020()
+
+	fmt.Printf("found them: %d %d %d. their sum: %d \n", a, b, c, a*b*c)
+}
+
+func main() {
+	// part1()
+	part2()
 }
