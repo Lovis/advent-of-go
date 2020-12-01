@@ -233,5 +233,5 @@ func main() {
 	fmt.Printf("Hello %d \n", len(input))
 	a, b := find2020()
 
-	fmt.Printf("found them: %d %d \n", a, b)
+	fmt.Printf("found them: %d %d. their sum: %d \n", a, b, a*b)
 }
