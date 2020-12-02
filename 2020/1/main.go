@@ -256,6 +256,45 @@ func part2find2020() (int, int, int) {
 	return a, b, c
 }
 
+// Emils del 1
+func solve1() {
+	for _, a := range input {
+		remainder := 2020 - a
+		for _, b := range input {
+			if remainder == b {
+				fmt.Printf("%d\n", a*b)
+			}
+		}
+	}
+}
+
+// Emils del 2
+type Tuple struct {
+	x int
+	y int
+}
+
+func solve2() {
+	tuples := []Tuple{}
+	for _, a := range input {
+		for _, b := range input {
+			var t Tuple
+			t.x, t.y = a, b
+			tuples = append(tuples, t)
+		}
+	}
+
+	for _, x := range input {
+		remainder := 2020 - x
+		for _, t := range tuples {
+			if remainder == t.x+t.y {
+				fmt.Printf("%d\n", x*t.x*t.y)
+			}
+		}
+	}
+}
+
+//
 func part1() {
 	fmt.Printf("Hello %d \n", len(input))
 	a, b := find2020()
@@ -272,5 +311,7 @@ func part2() {
 
 func main() {
 	// part1()
-	part2()
+	// part2()
+	// solve1()
+	solve2()
 }
