@@ -45,6 +45,15 @@ func main() {
 		input = append(input, policy)
 
 	}
-	fmt.Printf("Day 2, going steady \n")
-	fmt.Printf("input: %v \n", input)
+	// 1-3 a: abcde
+	var count = 0
+	for _, policy := range input {
+		// split on policy.letter
+		occurrencies := len(strings.Split(policy.testPhrase, policy.letter))
+		fmt.Printf("%v %v\n", occurrencies, policy)
+		if occurrencies >= policy.lower && occurrencies <= policy.upper {
+			count++
+		}
+	}
+	fmt.Printf("counted: %d\n", count)
 }
