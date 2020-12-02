@@ -45,12 +45,14 @@ func main() {
 		input = append(input, policy)
 
 	}
+
+	fmt.Printf("length, %d\n", len(input))
 	// 1-3 a: abcde
 	var count = 0
 	for _, policy := range input {
 		// split on policy.letter
-		occurrencies := len(strings.Split(policy.testPhrase, policy.letter))
-		fmt.Printf("%v %v\n", occurrencies, policy)
+		occurrencies := len(strings.Split(policy.testPhrase, policy.letter)) - 1
+		// fmt.Printf("policy %v, occurrencies %v\n", policy, occurrencies)
 		if occurrencies >= policy.lower && occurrencies <= policy.upper {
 			count++
 		}
