@@ -6,11 +6,16 @@ import (
 	"os"
 )
 
-// ..#...##
-// #.#..###
-// 2d matrix
-// array of strings
-// for _, row in input
+func evenSteps(pattern []string) int {
+	var count = 0
+	for y := 0; y < len(pattern); y++ {
+		if pattern[y][(3*y)%len(pattern[y])] == '#' {
+			count++
+		}
+	}
+	return count
+}
+
 func main() {
 	fmt.Printf("Day 3 is here\n")
 
@@ -32,13 +37,7 @@ func main() {
 
 	}
 
-	// path => asaaasssaass until length of array
-	// [0][0], [1, 3], [2, 6]
-	var count = 0
-	for y := 0; y < len(pattern); y++ {
-		if pattern[y][(3*y)%len(pattern[y])] == '#' {
-			count++
-		}
-	}
+	count := evenSteps(pattern)
+
 	fmt.Printf("counted %d \n", count)
 }
