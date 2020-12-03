@@ -9,7 +9,6 @@ import (
 func evenSteps(pattern []string, k int, x int) int {
 	var count = 0
 	for y := 0; y < len(pattern); y += x {
-		fmt.Printf("here y: %d x: %d, char: %v \n", y, (k*y)/x%len(pattern[y]), pattern[y][(k*y)%len(pattern[y])])
 		if pattern[y][(k*y/x)%len(pattern[y])] == '#' {
 			count++
 		}
@@ -45,6 +44,5 @@ func main() {
 	c2 := evenSteps(pattern, 1, 2)
 
 	// fmt.Printf("counted %d %d %d %d %d\n", c1, c3, c5, c7, c2)
-	// fmt.Printf("counted %d \n", c2)
 	fmt.Printf("counted %d \n", c1*c3*c5*c7*c2)
 }
