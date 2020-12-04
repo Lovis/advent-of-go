@@ -20,6 +20,18 @@ import (
 
 // break on empty line
 
+func validPassport(passport []string) bool {
+	var cid = false
+	for _, attribute := range passport {
+		if strings.Split(attribute, ":")[0] == "cid" {
+			cid = true
+			continue
+		}
+	}
+	// fmt.Printf("valid? %d %t\n", len(passport), cid)
+	return len(passport) == 8 || (len(passport) == 7 && !cid)
+}
+
 func main() {
 	fmt.Printf("Day 4\n")
 
@@ -39,12 +51,18 @@ func main() {
 	for scanner.Scan() {
 		s := scanner.Text()
 		if s == "" {
-			passports = append(passports, passport)
+			// end of passport.
+			// verify length.
+			// if length is less than 1, look
+			if validPassport(passport) {
+				passports = append(passports, passport)
+			}
 			passport = []string{}
 		} else {
 			attributes := strings.Split(s, " ")
 			passport = append(passport, attributes...)
 		}
 	}
-	fmt.Printf("reading passports: %v\n", passports)
+
+	fmt.Printf("valid passports: %v\n", len(passports))
 }
