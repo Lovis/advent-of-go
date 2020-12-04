@@ -81,6 +81,9 @@ func verifiedPassport(passport []string) bool {
 					validParameters = false
 					break
 				}
+			} else {
+				validParameters = false
+				break
 			}
 
 		case "hcl":
