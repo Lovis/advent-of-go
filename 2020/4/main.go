@@ -98,7 +98,7 @@ func verifiedPassport(passport []string) bool {
 			}
 
 		case "pid":
-			matched, _ := regexp.MatchString(`^[0-9]{0}`, value)
+			matched, _ := regexp.MatchString(`^[0-9]{9}`, value)
 			if !matched {
 				validParameters = false
 				break
@@ -112,14 +112,13 @@ func verifiedPassport(passport []string) bool {
 	}
 
 	presentParameters = len(passport) == 8 || (len(passport) == 7 && !cid)
-	fmt.Printf("present %t\n", presentParameters)
-	return validParameters
+	return validParameters && presentParameters
 }
 
 func main() {
 	fmt.Printf("Day 4\n")
 
-	file, err := os.Open("valid.txt")
+	file, err := os.Open("input.txt")
 
 	if err != nil {
 		fmt.Printf("error opening file")
