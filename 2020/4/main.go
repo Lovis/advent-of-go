@@ -101,7 +101,7 @@ func verifiedPassport(passport []string) bool {
 			}
 
 		case "pid":
-			matched, _ := regexp.MatchString(`^[0-9]{9}`, value)
+			matched, _ := regexp.MatchString(`^[0-9]{9}$`, value)
 			if !matched {
 				validParameters = false
 				break
