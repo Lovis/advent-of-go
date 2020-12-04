@@ -137,10 +137,8 @@ func main() {
 	for scanner.Scan() {
 		s := scanner.Text()
 		if s == "" {
-			// end of passport.
-			// verify length.
-			// if length is less than 1, look
 			if verifiedPassport(passport) {
+				//fmt.Printf("this is ok? %v\n", passport)
 				passports = append(passports, passport)
 			}
 			passport = []string{}
