@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 )
 
 // position
@@ -43,6 +44,7 @@ func main() {
 
 	var seats []Seat
 	var highest = 0
+	var seatIds []int
 
 	for scanner.Scan() {
 		input := scanner.Text()
@@ -76,11 +78,29 @@ func main() {
 		seat.col = COLS[colLower:colUpper][0]
 		seat.id = seat.row*8 + seat.col
 
+		seatIds = append(seatIds, seat.id)
 		if seat.id > highest {
 			highest = seat.id
 		}
 		seats = append(seats, seat)
 	}
 
-	fmt.Printf("seats: %v, highest: %d\n", seats, highest)
+	fmt.Printf("highest seat id: %d\n", highest)
+
+	// part 2
+	// sort seatIds []int
+	sort.Ints(seatIds[:])
+	var mySeat = 0
+	for i, seat := range seatIds {
+		if i == 0 || i == len(seatIds) {
+			continue
+		}
+		// i-1 i   i + 1
+		// 499 500 502
+		if seatIds[i+1] != seat+1 {
+			mySeat = seat + 1
+			break
+		}
+	}
+	fmt.Printf("the only missing: %d\n", mySeat)
 }

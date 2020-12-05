@@ -121,7 +121,7 @@ func verifiedPassport(passport []string) bool {
 func main() {
 	fmt.Printf("Day 4\n")
 
-	file, err := os.Open("input.txt")
+	file, err := os.Open("emil.txt")
 
 	if err != nil {
 		fmt.Printf("error opening file")
