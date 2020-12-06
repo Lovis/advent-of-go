@@ -7,10 +7,34 @@ import (
 	"strings"
 )
 
+func findAnyAffirmativeAnswer(scanner *bufio.Scanner) int {
+	// each group is separated by blank line
+	// each person, within the group is on a separate line
+	var anyInGroupResponses = ""
+	var groupResponses = ""
+
+	for scanner.Scan() {
+		s := scanner.Text()
+		if s == "" {
+			// end of group
+			anyInGroupResponses += groupResponses
+			groupResponses = ""
+		} else {
+			for _, char := range s {
+				charString := string(char)
+				if !strings.Contains(groupResponses, charString) {
+					groupResponses += charString
+				}
+			}
+		}
+	}
+	return len(anyInGroupResponses)
+}
+
 func main() {
 	fmt.Printf("Day 6\n")
 
-	var affirmativeAnswers = ""
+	// var allInGroupResponses = ""
 
 	file, err := os.Open("input.txt")
 
@@ -23,26 +47,6 @@ func main() {
 
 	scanner.Split(bufio.ScanLines)
 
-	// each group is separated by blank line
-	// each person, within the group is on a separate line
-
-	var responses = ""
-	for scanner.Scan() {
-		s := scanner.Text()
-		if s == "" {
-			// end of group
-			affirmativeAnswers += responses
-			responses = ""
-		} else {
-			for _, char := range s {
-				charString := string(char)
-				if !strings.Contains(responses, charString) {
-					responses += charString
-				}
-			}
-		}
-	}
-	fmt.Printf("number of right answers: %d\n", len(affirmativeAnswers))
-
-	// fmt.Printf("parsed answers: %v\n", affirmativeAnswers)
+	var anyInGroupResponsesTotal = findAnyAffirmativeAnswer(scanner)
+	fmt.Printf("number of right answers: %d\n", anyInGroupResponsesTotal)
 }
