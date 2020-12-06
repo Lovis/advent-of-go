@@ -44,5 +44,5 @@ func main() {
 	}
 	fmt.Printf("number of right answers: %d\n", len(affirmativeAnswers))
 
-	fmt.Printf("parsed answers: %v\n", affirmativeAnswers)
+	// fmt.Printf("parsed answers: %v\n", affirmativeAnswers)
 }
