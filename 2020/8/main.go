@@ -40,23 +40,34 @@ func readInstructions(instructions []Instruction) int {
 	// traverse the instructions
 	var index = 0
 	for !found {
-		// fmt.Printf("index [%d] val [%v]\n", index, instructions[index])
-		if instructions[index].executed == true {
-			// fmt.Printf("second visit! for index [%d]: [%v]", index, instructions[index])
+		if index == len(instructions) {
+			fmt.Printf("this is success!!\n")
 			found = true
 			break
-		} else if instructions[index].operation == "acc" {
-			instructions[index].executed = true
-			acc += instructions[index].argument
-			index++
-		} else if instructions[index].operation == "jmp" {
-			instructions[index].executed = true
-			index += instructions[index].argument
-		} else if instructions[index].operation == "nop" {
-			instructions[index].executed = true
-			index++
 		}
 
+		var instruction = &instructions[index]
+		fmt.Printf("visiting [%v]\n", instruction)
+
+		if instruction.executed == true {
+			fmt.Printf("second visit! for index [%d]: [%v]", index, instruction)
+			found = true
+			break
+
+		} else if instruction.operation == "acc" {
+			instruction.executed = true
+			acc += instruction.argument
+			index++
+
+		} else if instruction.operation == "jmp" {
+			instruction.executed = true
+			index += instruction.argument
+
+		} else if instruction.operation == "nop" {
+			instruction.executed = true
+			index++
+		}
+		fmt.Printf("visited. [%v]\n", instruction)
 	}
 	return acc
 }
