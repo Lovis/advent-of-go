@@ -49,51 +49,61 @@ func parseRules(scanner *bufio.Scanner) []Bag {
 	return bags
 }
 
-func findShinyBags(bags []Bag) int {
-	// use the []Bag
-	// traverse from every entry but the one starting w shiny bag
-	// when done, if shiny is in the list => +1
+func traversing(bags []Bag) int {
+	var holdingShiny []int
 
-	var containsShiny []int
-
-	for index, bag := range bags {
-		if bag.color != "shiny gold" {
-			metShiny := traverse(bags, bag, index)
-			if metShiny {
-				containsShiny = append(containsShiny, index)
+	for initialIndex, initialBag := range bags {
+		if (initialBag.color == "shiny bag") {
+			continue
+		} else {
+			found := recursive(bags, initialBag, holdingShiny, initialIndex)
+			if found {
+				fmt.Printf("returned true, %v, %v\n", initialIndex, holdingShiny)
+				holdingShiny = append(holdingShiny, initialIndex)
 			}
 		}
 	}
-	return len(containsShiny)
-
-	// traverse(bags, bags[0])
+	// holdingShiny := recursive(bags, bags[0], []int{} , 0)
+	return len(holdingShiny)
 }
 
-func traverse(bags []Bag, current Bag, index int) bool {
-	var metShiny = false
-	if (len(current.contains) == 0 || metShiny) {
-		// now we're done.
-		fmt.Printf("reached shiny gold or no more bags\n")
-		return true
-	} else {
-		for _, sub := range current.contains {
-			if sub.color == "shiny gold" {
-				metShiny = true
-				fmt.Printf("met shiny, breaking\n")
+func recursive(bags []Bag, current Bag, indicies []int, initialIndex int) bool {
+	fmt.Printf("incoming: %v\n", indicies)
+	found := false
+	for _, index := range indicies {
+		if index == initialIndex {
+			found = true
+		}
+	}
+	// fmt.Printf("new call: bag: %v, found: %t\n", current, found)
+	if current.color == "shiny gold" {
+		fmt.Printf("++ exiting!\n")
+		found = true
+		indicies = append(indicies, initialIndex)
+		fmt.Printf("indicies %v\n", indicies)
+		// return indicies
+	}
+	if (!found && len(current.contains) > 0) {
+		// go deeper
+		for _, child := range current.contains {
+			if found || child.color == "shiny gold" {
+				found = true
+				indicies = append(indicies, initialIndex)
+				fmt.Printf("!! met shiny, breaking\n")
+				fmt.Printf("indicies %v\n", indicies)
+				// return indicies
 				break
-			} else {
-				// traverse further
-				fmt.Printf("here [%v]\n", sub)
-				// UGLY need to find the Bag holding sub.color
-				for _, next := range bags {
-					if sub.color == next.color {
-						traverse(bags, next, index)
-					}
+			}
+			// UGLY need to find the Bag holding sub.color
+			for _, next := range bags {
+				if child.color == next.color {
+					fmt.Printf("-- child [%v]\n", next.color)
+					recursive(bags, next, indicies, initialIndex)
 				}
 			}
 		}
 	}
-	return metShiny
+	return found
 }
 
 func main() {
@@ -111,5 +121,9 @@ func main() {
 	scanner.Split(bufio.ScanLines)
 
 	var rules = parseRules(scanner)
-	fmt.Printf("PART 1 %v\n", findShinyBags(rules))
+	// for _, rule := range rules {
+	// 	fmt.Printf("%+v\n", rule)
+	// }
+	// fmt.Printf("PART 1 %v\n", findShinyBags(rules))
+	fmt.Printf("PART 1: count %v\n", traversing(rules))
 }
