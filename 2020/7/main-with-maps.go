@@ -8,48 +8,49 @@ import (
 	"strings"
 )
 
+var bags = make(map[string]Bag)
 // Bag a littl struct for you
 type Bag struct {
 	color string
 	childs map[*Bag]int
 }
 
-func findShinyBag(bags []Bag) int {
+func findShinyBag() int {
 	var myBag = "shiny gold"
-
+	var counter = 0
 	for _, bag := range bags {
 		if (bag.color != myBag) {
-			search(bags, bag, myBag)
+			found := search(bag, myBag)
+			if found == true {
+				fmt.Printf("---search res: %t %s\n", found, bag.color)
+				counter++
+			}
 		}
 	}
-	return 0
+	// fmt.Printf("res %t\n", search(bags["dark brown"], myBag))
+	return counter
 }
 
-func search(bags []Bag, current Bag, myBag string) bool {
+func search(current Bag, myBag string) bool {
+	fmt.Printf("\nbag %v\n", current)
 	if current.color == myBag {
+		fmt.Printf("found gold %v\n", current.color)
 		return true
 	}
 
-	// if (len(current.childs) == 0) {
-	// 	// dead end
-	// 	return false
-	// }
+	// this makes one branch only
+	for childBag := range current.childs {
+		fmt.Printf("running childbag %v\n", childBag)
+		found := search(bags[childBag.color], myBag)
+		if found {
+			return true
+		}
 
-	// "red": 4
-	// for color, count := range current.childs {
-	// 	search(bags, )
-
-	// 	for _, bag := range bags {
-	// 		if bag.color == color {
-	// 			search(bags, bag, myBag)
-	// 		}
-	// 	}
-	// }
+	}
 	return false
 }
 
 func parseInput(scanner *bufio.Scanner) map[string]Bag {
-	bags := make(map[string]Bag)
 	for scanner.Scan() {
 		var bag Bag
 
@@ -71,9 +72,7 @@ func parseInput(scanner *bufio.Scanner) map[string]Bag {
 			splits := strings.Split(child, " ")
 			count, _ := strconv.Atoi(splits[0])
 			color := strings.Join(splits[1:len(splits)-1], " ")
-			// fmt.Printf("current col: %s\n", color)
 
-			// find or create create a bag pointer for the child
 			var child Bag
 			for _, existing := range bags {
 				if existing.color == color {
@@ -82,7 +81,6 @@ func parseInput(scanner *bufio.Scanner) map[string]Bag {
 			}
 
 			child.color = color
-			// fmt.Printf("color %s count %d\n", child.color, count)
 			children[&child] = count
 
 			if _, ok := bags[child.color]; ok {
@@ -102,7 +100,7 @@ func parseInput(scanner *bufio.Scanner) map[string]Bag {
 func main() {
 	fmt.Printf("Day 7\n")
 
-	file, err := os.Open("tiny.txt")
+	file, err := os.Open("input.txt")
 
 	if err != nil {
 		fmt.Printf("error opening file\n")
@@ -113,12 +111,14 @@ func main() {
 
 	scanner.Split(bufio.ScanLines)
 
-	var bags = parseInput(scanner)
-	fmt.Printf("PART 1, bags:\n")
-	for _, bag := range bags {
-		fmt.Printf("bag: %v\n", bag.color)
-		for key, value := range bag.childs {
-			fmt.Printf("-- child: %v %v\n", key, value)
-		}
-	}
+	parseInput(scanner)
+	// fmt.Printf("PART 1, bags:\n")
+	// for _, bag := range bags {
+	// 	fmt.Printf("bag: %v\n", bag.color)
+	// 	for key, value := range bag.childs {
+	// 		fmt.Printf("-- child: %v %v\n", key, value)
+	// 	}
+	// }
+
+	fmt.Printf("search: %d\n", findShinyBag())
 }
