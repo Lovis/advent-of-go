@@ -40,17 +40,11 @@ func readInstructions(instructions []Instruction) int {
 	// traverse the instructions
 	var index = 0
 	for !found {
-		if index == len(instructions) -1 {
-			fmt.Printf("reached the last line!\n")
-			found = true
-			break
-		}
-
 		var instruction = &instructions[index]
-		fmt.Printf("[%d] visiting [%v]\n", index, instruction)
+		// fmt.Printf("[%d] visiting [%v]\n", index, instruction)
 
 		if instruction.executed == true {
-			fmt.Printf("second visit! for index [%d]: [%v]\n", index, instruction)
+			// fmt.Printf("second visit! for index [%d]: [%v]\n", index, instruction)
 			found = true
 			acc = -1 // remove this line for pt1
 			break
@@ -68,19 +62,25 @@ func readInstructions(instructions []Instruction) int {
 			instruction.executed = true
 			index++
 		}
-		fmt.Printf("[%d] visited. [%v]\n", index, instruction)
+		if index >= len(instructions) {
+			fmt.Printf("reached the last line!\n")
+			found = true
+			break
+		}
+		// fmt.Printf("[%d] visited. [%v]\n", index, instruction)
 	}
 	return acc
 }
 
 // traverse the instructions, and carefully shift one jmp or nop at the time
-
 func traverseAndShiftInstructions(instructions []Instruction) int {
 	var swapIndex = 0
 	var acc = -1
 	experiment := make([]Instruction, len(instructions))
 
 	for index := range instructions {
+
+		// make a copy by value.
 		copy(experiment, instructions)
 		var instruction = &experiment[index]
 		if instruction.operation == "jmp" || instruction.operation == "nop" {
@@ -92,16 +92,11 @@ func traverseAndShiftInstructions(instructions []Instruction) int {
 			case "jmp":
 				instruction.operation = "nop"
 			}
-			fmt.Printf("\n\nswapping %d, [%v]\n", swapIndex, experiment)
-			acc := readInstructions(experiment)
+			// fmt.Printf("\n\nswapping %d, [%v]\n", swapIndex, experiment)
+			acc = readInstructions(experiment)
 			if acc != -1 {
 				fmt.Printf("made it all the way! swapping %d: acc %d\n", swapIndex, acc)
 				break
-			} else {
-				fmt.Printf("no success swapping %d %v\n", swapIndex, instruction)
-				experiment := instructions
-				fmt.Printf("instr: %v\n", instructions)
-				fmt.Printf("exper: %v\n", experiment)
 			}
 		}
 	}
