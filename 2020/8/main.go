@@ -106,7 +106,7 @@ func traverseAndShiftInstructions(instructions []Instruction) int {
 func main() {
 	fmt.Printf("Day 8\n")
 
-	file, err := os.Open("tiny.txt")
+	file, err := os.Open("input.txt")
 
 	if err != nil {
 		fmt.Printf("error opening file\n")
