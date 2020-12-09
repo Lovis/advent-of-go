@@ -93,10 +93,7 @@ func parseInput(scanner *bufio.Scanner) map[string]Bag {
 
 
 		bag.childs = children
-		if _, ok := bags[bag.color]; ok {
-		} else {
-			bags[bag.color] = bag
-		}
+		bags[bag.color] = bag
 	}
 
 	return bags
