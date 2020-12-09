@@ -1,209 +1,123 @@
 package main
 
-// import (
-// 	"bufio"
-// 	"fmt"
-// 	"os"
-// 	"strings"
-// 	"strconv"
-// )
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
 
-// type Bag struct {
-// 	Color string
-// 	Childs map[string]*Bag
-// }
+var bags = make(map[string]Bag)
+// Bag a littl struct for you
+type Bag struct {
+	color string
+	childs map[*Bag]int
+}
 
-// func NewBag(Color string) *Bag {
-// 	return &Bag {
-// 		Color: Color,
-// 		Childs: map[string]*Bag{},
-// 	}
-// }
+func findShinyBag() int {
+	var myBag = "shiny gold"
+	var counter = 0
+	for _, bag := range bags {
+		if (bag.color != myBag) {
+			found := search(bag, myBag)
+			if found == true {
+				counter++
+			}
+		}
+	}
+	// fmt.Printf("res %t\n", search(bags["dark brown"], myBag))
+	return counter
+}
 
-// type Graph struct {
-// 	Childs map[string]*Bag
-// }
+func search(current Bag, myBag string) bool {
+	// fmt.Printf("\nbag %v\n", current)
+	if current.color == myBag {
+		// fmt.Printf("found gold %v\n", current.color)
+		return true
+	}
 
-// func NewGraph() *Graph {
-// 	return &Graph{
-// 		Childs: map[string]*Bag{},
-// 	}
-// }
+	// this makes one branch only
+	for childBag := range current.childs {
+		// fmt.Printf("running childbag %v\n", childBag)
+		found := search(bags[childBag.color], myBag)
+		if found {
+			return true
+		}
 
-// func (g *Graph) AddBag(color string) {
-// 	v := NewBag(color)
-// 	g.Childs[color] = v
-// }
+	}
+	return false
+}
 
-// func (g *Graph) AddEdge(k1, k2 string, count int) {
-// 	v1 := g.Childs[k1]
-// 	v2 := g.Childs[k2]
+func parseInput(scanner *bufio.Scanner) map[string]Bag {
+	for scanner.Scan() {
+		var bag Bag
 
-// 	if _, ok := v1.Childs[v2.Color]; ok {
-// 		return
-// 	}
+		s := scanner.Text()
+		if s == "" {
+			continue
+		}
+		parts := strings.Split(s, "contain ")
+		bag.color = strings.Split(parts[0], " bags")[0]
 
-// 	v1.Childs[v2.Color] = v2
-// 	g.Childs[v1.Color] = v1
-// 	g.Childs[v2.Color] = v2
+		childs := strings.Split(parts[1], ", ")
 
-// }
-// // type Children struct {
-// // 	number int
-// // 	color string
-// // }
+		children := make(map[*Bag]int)
 
-// // type Bag struct {
-// // 	color string
-// // 	children map[Children]int
-// // }
+		for _, child := range childs {
+			if child == "no other bags." {
+				continue
+			}
+			splits := strings.Split(child, " ")
+			count, _ := strconv.Atoi(splits[0])
+			color := strings.Join(splits[1:len(splits)-1], " ")
 
-// // func parseRules(scanner *bufio.Scanner) []Bag {
-// // 	var bags []Bag
-// // 	for scanner.Scan() {
-// // 		var bag Bag
-// // 		s := scanner.Text()
-// // 		if s == "" {
-// // 			continue
-// // 		}
-// // 		parts := strings.Split(s, "contain ")
-// // 		bag.color = strings.Trim(parts[0], " bags")
-// // 		contains := strings.Split(parts[1], ", ")
+			var child Bag
+			for _, existing := range bags {
+				if existing.color == color {
+					child = existing
+				}
+			}
 
-// // 		var children map[]
-// // 		// content: "1 bright white bag"
-// // 		// "no other bag"
-// // 		for _, content := range contains {
-// // 			var c Children
-// // 			if content == "no other bags." {
-// // 				continue
-// // 			}
-// // 			splits := strings.Split(content, " ")
-// // 			c.number, _ = strconv.Atoi(splits[0])
-// // 			c.color = strings.Join(splits[1:len(splits)-1], " ")
-// // 			contents = append(contents, c)
-// // 		}
-// // 		bag.children = contents
-// // 		bags = append(bags, bag)
-// // 	}
+			child.color = color
+			children[&child] = count
 
-// // 	return bags
-// // }
-
-// // func traversing(bags []Bag) int {
-// // 	var holdingShiny []int
-
-// // 	for initialIndex, initialBag := range bags {
-// // 		if (initialBag.color == "shiny bag") {
-// // 			continue
-// // 		} else {
-// // 			found := recursive(bags, initialBag, holdingShiny, initialIndex)
-// // 			if found {
-// // 				fmt.Printf("returned true, %v, %v\n", initialIndex, holdingShiny)
-// // 				holdingShiny = append(holdingShiny, initialIndex)
-// // 			}
-// // 		}
-// // 	}
-// // 	// holdingShiny := recursive(bags, bags[0], []int{} , 0)
-// // 	return len(holdingShiny)
-// // }
-
-// // func recursive(bags []Bag, current Bag, indicies []int, initialIndex int) bool {
-// // 	fmt.Printf("incoming: %v\n", indicies)
-// // 	found := false
-// // 	for _, index := range indicies {
-// // 		if index == initialIndex {
-// // 			found = true
-// // 		}
-// // 	}
-// // 	// fmt.Printf("new call: bag: %v, found: %t\n", current, found)
-// // 	if current.color == "shiny gold" {
-// // 		fmt.Printf("++ exiting!\n")
-// // 		found = true
-// // 		indicies = append(indicies, initialIndex)
-// // 		fmt.Printf("indicies %v\n", indicies)
-// // 		// return indicies
-// // 	}
-// // 	if (!found && len(current.contains) > 0) {
-// // 		// go deeper
-// // 		for _, child := range current.contains {
-// // 			if found || child.color == "shiny gold" {
-// // 				found = true
-// // 				indicies = append(indicies, initialIndex)
-// // 				fmt.Printf("!! met shiny, breaking\n")
-// // 				fmt.Printf("indicies %v\n", indicies)
-// // 				// return indicies
-// // 				break
-// // 			}
-// // 			// UGLY need to find the Bag holding sub.color
-// // 			for _, next := range bags {
-// // 				if child.color == next.color {
-// // 					fmt.Printf("-- child [%v]\n", next.color)
-// // 					recursive(bags, next, indicies, initialIndex)
-// // 				}
-// // 			}
-// // 		}
-// // 	}
-// // 	return found
-// // }
-
-// type Relation struct {
-// 	parent string
-// 	child string
-// 	count int
-// }
-// func main1() {
-// 	fmt.Printf("Day 7\n")
-
-// 	file, err := os.Open("tiny.txt")
-
-// 	if err != nil {
-// 		fmt.Printf("error opening file\n")
-// 		return
-// 	}
-
-// 	scanner := bufio.NewScanner(file)
-
-// 	scanner.Split(bufio.ScanLines)
-
-// 	var bags []string
-// 	var relations []Relation
-// 	for scanner.Scan() {
-// 		var bag string
-// 		s := scanner.Text()
-// 		if s == "" {
-// 			continue
-// 		}
-// 		parts := strings.Split(s, "contain ")
-// 		bag = strings.Trim(parts[0], " bags")
-// 		contains := strings.Split(parts[1], ", ")
+			if _, ok := bags[child.color]; ok {
+			} else {
+				bags[child.color] = child
+			}
+		}
 
 
-// 		// content: "1 bright white bag"
-// 		// "no other bag"
-// 		for _, content := range contains {
-// 			var c Relation
-// 			if content == "no other bags." {
-// 				continue
-// 			}
-// 			splits := strings.Split(content, " ")
-// 			c.parent = bag
-// 			c.count, _ = strconv.Atoi(splits[0])
-// 			c.child = strings.Join(splits[1:len(splits)-1], " ")
-// 			relations = append(relations, c)
-// 		}
-// 		bags = append(bags, bag)
+		bag.childs = children
+		bags[bag.color] = bag
+	}
 
-// 		// fill the graph
+	return bags
+}
 
-// 		g := NewGraph()
+func main() {
+	fmt.Printf("Day 7\n")
 
-// 		for _, color := range bags {
-// 			g.AddBag(color)
-// 		}
+	file, err := os.Open("input.txt")
 
-// 		for _, relation := range relations {
-// 			g.AddEdge(relation.parent, relation.child, relation.count)
-// 		}
-// 	}
-// }
+	if err != nil {
+		fmt.Printf("error opening file\n")
+		return
+	}
+
+	scanner := bufio.NewScanner(file)
+
+	scanner.Split(bufio.ScanLines)
+
+	parseInput(scanner)
+	// fmt.Printf("PART 1, bags:\n")
+	// for _, bag := range bags {
+	// 	fmt.Printf("bag: %v\n", bag.color)
+	// 	for key, value := range bag.childs {
+	// 		fmt.Printf("-- child: %v %v\n", key, value)
+	// 	}
+	// }
+
+	fmt.Printf("search: %d\n", findShinyBag())
+}
