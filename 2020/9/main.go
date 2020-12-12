@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func findContiguousSet(preamble []int, current int) (int, int) {
+func findContiguousSet(preamble []int, current int) int {
 	// traverse the preamble list until the sum is equal to current
 	var found = false
 	var sum []int
@@ -17,19 +17,29 @@ func findContiguousSet(preamble []int, current int) (int, int) {
 
 		first := preamble[i]
 		currentSum = first
-		sum := []int{first}
+		sum = []int{first}
 		for c := i + 1; currentSum < current && c < len(preamble); c++ {
 			sum = append(sum, preamble[c])
 			currentSum += preamble[c]
 
 			if currentSum == current {
 				fmt.Printf("found a sum matching: %v\n", sum)
+				// now find smallest and largest
+				smallest, largest = sum[0], sum[0]
+				for _, cont := range sum {
+					if smallest > cont {
+						smallest = cont
+					}
+					if largest < cont {
+						largest = cont
+					}
+				}
 				found = true
 				break
 			}
 		}
 	}
-	return smallest, largest
+	return smallest + largest
 }
 
 func verifyPreamble(preamble []int, current int) bool {
@@ -74,9 +84,9 @@ func parsePreamble(scanner *bufio.Scanner, preambleLimit int) int {
 
 		if !verified {
 			mismatch = current
-			smallest, largest := findContiguousSet(numbers, current)
-			fmt.Printf("found a set: %d %d\n", smallest, largest)
-			return mismatch
+			key := findContiguousSet(numbers, current)
+			fmt.Printf("found a set: %d %d\n", key, mismatch)
+			return key
 		}
 	}
 
