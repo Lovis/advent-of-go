@@ -9,17 +9,35 @@ import (
 )
 
 var bags = make(map[string]Bag)
+
 // Bag a littl struct for you
 type Bag struct {
-	color string
+	color  string
 	childs map[*Bag]int
+}
+
+// PART 2
+func countBagsContainingShiny() int {
+	var myBag = "shiny gold"
+	// fmt.Printf("res %t\n", search(bags["shiny gold"], myBag))
+	return searchAndCount(bags[myBag])
+}
+
+func searchAndCount(current Bag) int {
+	var count int
+
+	for childColor := range current.childs {
+		fmt.Printf("running parent %v, child: %v, nr childs %v\n", current.color, bags[childColor.color], bags[current.color].childs[childColor])
+		count += bags[current.color].childs[childColor] * bags[current.color].childs[childColor]
+	}
+	return count
 }
 
 func findShinyBag() int {
 	var myBag = "shiny gold"
 	var counter = 0
 	for _, bag := range bags {
-		if (bag.color != myBag) {
+		if bag.color != myBag {
 			found := search(bag, myBag)
 			if found == true {
 				counter++
@@ -37,7 +55,6 @@ func search(current Bag, myBag string) bool {
 		return true
 	}
 
-	// this makes one branch only
 	for childBag := range current.childs {
 		// fmt.Printf("running childbag %v\n", childBag)
 		found := search(bags[childBag.color], myBag)
@@ -88,7 +105,6 @@ func parseInput(scanner *bufio.Scanner) map[string]Bag {
 			}
 		}
 
-
 		bag.childs = children
 		bags[bag.color] = bag
 	}
@@ -119,5 +135,7 @@ func main() {
 	// 	}
 	// }
 
-	fmt.Printf("search: %d\n", findShinyBag())
+	// fmt.Printf("part 1: search: %d\n", findShinyBag())
+
+	fmt.Printf("part 2: shiny: %d\n", countBagsContainingShiny())
 }
