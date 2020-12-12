@@ -85,7 +85,7 @@ func parsePreamble(scanner *bufio.Scanner, preambleLimit int) int {
 		if !verified {
 			mismatch = current
 			key := findContiguousSet(numbers, current)
-			fmt.Printf("found a set: %d %d\n", key, mismatch)
+			fmt.Printf("PART 2: found a contiguous set w sum: %d, mismatch: %d\n", key, mismatch)
 			return key
 		}
 	}
@@ -96,7 +96,7 @@ func parsePreamble(scanner *bufio.Scanner, preambleLimit int) int {
 func main() {
 	fmt.Printf("Day 9\n")
 
-	file, err := os.Open("tiny.txt")
+	file, err := os.Open("input.txt")
 
 	if err != nil {
 		fmt.Printf("error opening file\n")
@@ -107,5 +107,5 @@ func main() {
 
 	scanner.Split(bufio.ScanLines)
 
-	fmt.Printf("PART 1, preamble: %d\n", parsePreamble(scanner, 5))
+	fmt.Printf("PART 1+2, preamble: %d\n", parsePreamble(scanner, 25))
 }
