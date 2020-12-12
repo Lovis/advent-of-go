@@ -7,21 +7,46 @@ import (
 	"strconv"
 )
 
-func verifyPreamble(premable []int, current int) bool {
+func findContiguousSet(preamble []int, current int) (int, int) {
+	// traverse the preamble list until the sum is equal to current
+	var found = false
+	var sum []int
+	var currentSum int
+	var smallest, largest int
+	for i := 0; !found && i < len(preamble); i++ {
+
+		first := preamble[i]
+		currentSum = first
+		sum := []int{first}
+		for c := i + 1; currentSum < current && c < len(preamble); c++ {
+			sum = append(sum, preamble[c])
+			currentSum += preamble[c]
+
+			if currentSum == current {
+				fmt.Printf("found a sum matching: %v\n", sum)
+				found = true
+				break
+			}
+		}
+	}
+	return smallest, largest
+}
+
+func verifyPreamble(preamble []int, current int) bool {
 	// find the two numbers amongst the 5 previous elements
 	// pluck the first element, find the missing value
-	fmt.Printf("preamble %v, number %d\n", premable, current)
+	// fmt.Printf("preamble %v, number %d\n", preamble, current)
 	var found = false
-	for i := 0; !found && i < len(premable); i++ {
-		first := premable[i]
+	for i := 0; !found && i < len(preamble); i++ {
+		first := preamble[i]
 		desiredPreamble := current - first
-		for _, second := range premable {
+		for _, second := range preamble {
 			if first == second {
 				continue
 			}
 
 			if second == desiredPreamble {
-				fmt.Printf("found match: %d + %d = %d\n", first, second, current)
+				// fmt.Printf("found match: %d + %d = %d\n", first, second, current)
 				found = true
 				break
 			}
@@ -49,6 +74,8 @@ func parsePreamble(scanner *bufio.Scanner, preambleLimit int) int {
 
 		if !verified {
 			mismatch = current
+			smallest, largest := findContiguousSet(numbers, current)
+			fmt.Printf("found a set: %d %d\n", smallest, largest)
 			return mismatch
 		}
 	}
@@ -59,7 +86,7 @@ func parsePreamble(scanner *bufio.Scanner, preambleLimit int) int {
 func main() {
 	fmt.Printf("Day 9\n")
 
-	file, err := os.Open("input.txt")
+	file, err := os.Open("tiny.txt")
 
 	if err != nil {
 		fmt.Printf("error opening file\n")
@@ -70,5 +97,5 @@ func main() {
 
 	scanner.Split(bufio.ScanLines)
 
-	fmt.Printf("PART 1, preamble: %d\n", parsePreamble(scanner, 25))
+	fmt.Printf("PART 1, preamble: %d\n", parsePreamble(scanner, 5))
 }
