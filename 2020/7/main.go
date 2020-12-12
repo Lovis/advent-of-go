@@ -24,11 +24,11 @@ func countBagsContainingShiny() int {
 }
 
 func searchAndCount(current Bag) int {
+	// fmt.Printf("\ncurrent bag: %s\n", current.color)
 	var count int
 
-	for childColor := range current.childs {
-		fmt.Printf("running parent %v, child: %v, nr childs %v\n", current.color, bags[childColor.color], bags[current.color].childs[childColor])
-		count += bags[current.color].childs[childColor] * bags[current.color].childs[childColor]
+	for childColor, number := range current.childs {
+		count += number + number*searchAndCount(bags[childColor.color])
 	}
 	return count
 }
