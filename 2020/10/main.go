@@ -33,8 +33,8 @@ func traverseAdapters(adapters []int) int {
 
 	// Finally, your device's built-in adapter is always 3 higher than the highest adapter
 	// so its rating is 22 jolts (always a difference of 3)
-	diff3 += 3
-	return diff1 * (diff3 + 1)
+	diff3++
+	return diff1 * (diff3)
 }
 
 func parseInput(scanner *bufio.Scanner) []int {
