@@ -33,40 +33,26 @@ func traverseAdapters(adapters []int) int {
 	return diff1 * (diff3)
 }
 
-// traverse the list count the number of options:
-//
-func distinctWaysOfTraveling(adapters []int) int {
+var answers = make(map[int]int)
 
-	// 1. convert to map for access by value
-	var adapterMap = make(map[int]int)
-
-	for _, a := range adapters {
-		adapterMap[a] = a
+func distinctWaysOfTraveling(adapters []int, index int) int {
+	var count = 0
+	if index == len(adapters)-1 {
+		return 1
 	}
 
-	var ways []int
-	for value := range adapterMap {
-		// for every index
-		// 7 8 9 10
-		var options []int
-		if _, ok := adapterMap[value+1]; ok {
-			options = append(options, value+1)
-		}
-		if _, ok := adapterMap[value+2]; ok {
-			options = append(options, value+2)
-		}
-		if _, ok := adapterMap[value+3]; ok {
-			options = append(options, value+3)
-		}
-
-		if value != adapters[len(adapters)-1] && len(options) > 1 {
-			ways = append(ways, options...)
-			fmt.Printf("round: %d, adding: %d total %d\n", value, options, ways)
-		}
-
+	if answer, ok := answers[adapters[index]]; ok {
+		return answer
 	}
 
-	return len(ways) + 1
+	for j, value := range adapters[index+1:] {
+		if value-adapters[index] <= 3 {
+			count += distinctWaysOfTraveling(adapters, j+index+1)
+		}
+	}
+	answers[adapters[index]] = count
+
+	return count
 }
 
 func parseInput(scanner *bufio.Scanner) []int {
@@ -88,7 +74,7 @@ func parseInput(scanner *bufio.Scanner) []int {
 func main() {
 	fmt.Printf("Day 10\n")
 
-	file, err := os.Open("mini.txt")
+	file, err := os.Open("input.txt")
 
 	if err != nil {
 		fmt.Printf("error opening file\n")
@@ -99,10 +85,11 @@ func main() {
 
 	scanner.Split(bufio.ScanLines)
 
-	numbers := parseInput(scanner)
+	numbers := append([]int{0}, parseInput(scanner)...)
 	// sum := traverseAdapters(numbers)
 	// fmt.Printf("PART 1, sum %d\n", sum)
 
-	variations := distinctWaysOfTraveling(numbers)
+	variations := distinctWaysOfTraveling(numbers, 0)
+
 	fmt.Printf("PART 2, variations %d\n", variations)
 }
