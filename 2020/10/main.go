@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func parseInput(scanner *bufio.Scanner, preambleLimit int) []int {
+func parseInput(scanner *bufio.Scanner) []int {
 	var numbers []int
 	for scanner.Scan() {
 		var current int
@@ -25,7 +25,7 @@ func parseInput(scanner *bufio.Scanner, preambleLimit int) []int {
 func main() {
 	fmt.Printf("Day 10\n")
 
-	file, err := os.Open("input.txt")
+	file, err := os.Open("tiny.txt")
 
 	if err != nil {
 		fmt.Printf("error opening file\n")
