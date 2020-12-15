@@ -55,6 +55,14 @@ func distinctWaysOfTraveling(adapters []int, index int) int {
 	return count
 }
 
+func dp(adapters []int) int {
+	ans := map[int]int{0: 1}
+	for _, a := range adapters {
+		ans[a] = ans[a-1] + ans[a-2] + ans[a-3]
+	}
+	return ans[adapters[len(adapters)-1]]
+}
+
 func parseInput(scanner *bufio.Scanner) []int {
 	var numbers []int
 	for scanner.Scan() {
@@ -91,5 +99,10 @@ func main() {
 
 	variations := distinctWaysOfTraveling(numbers, 0)
 
+	// Emil solution
+	result := dp(numbers[1:])
+
 	fmt.Printf("PART 2, variations %d\n", variations)
+	fmt.Printf("PART 2, dp %d\n", result)
+
 }
