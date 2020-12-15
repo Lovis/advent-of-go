@@ -8,11 +8,11 @@ import (
 	"strings"
 )
 
-func getAdjacentOccupiedSeats(cx int, cy int, seatmap map[int][]string) int {
+func getAdjacentOccupiedSeats(cy int, cx int, seatmap map[int][]string) int {
 	occupiedSeats := 0
 
-	for x := cx - 1; x <= cx+1; x++ {
-		for y := cy - 1; y <= cy+1; y++ {
+	for y := cy - 1; y <= cy+1; y++ {
+		for x := cx - 1; x <= cx+1; x++ {
 			if y == cy && x == cx {
 				continue
 			}
@@ -32,24 +32,36 @@ func getAdjacentOccupiedSeats(cx int, cy int, seatmap map[int][]string) int {
 
 func simulate(seatmap map[int][]string) map[int][]string {
 	var simulated = make(map[int][]string)
+	var changed = false
+	// cred: https://gist.github.com/cjgiridhar/f95a5f6b1890d9a4b9ac0a8343806bdd
 	jsonStr, _ := json.Marshal(seatmap)
 	json.Unmarshal(jsonStr, &simulated)
+
+	fmt.Printf("\ninput: \n")
+	for i := 0; i < len(seatmap); i++ {
+		fmt.Printf("%d %v\n", i, seatmap[i])
+	}
 
 	for i, row := range seatmap {
 		for k, seat := range row {
 			// check neighbors
+
 			occupiedSeats := getAdjacentOccupiedSeats(i, k, seatmap)
-			fmt.Printf("checking %d %d: neighbors: %d\n", i, k, occupiedSeats)
+			// fmt.Printf("checking %d %d: neighbors: %d\n", i, k, occupiedSeats)
 			if seat == "L" && occupiedSeats == 0 {
+				changed = true
 				simulated[i][k] = "#"
-				fmt.Printf("changing to # %d %d \n", i, k)
+				// fmt.Printf("changing to # %d %d. input: %s changed: %s\n", i, k, seat, simulated[i][k])
 			} else if seat == "#" && occupiedSeats >= 4 {
+				changed = true
 				simulated[i][k] = "L"
-				fmt.Printf("changing to L %d %d \n", i, k)
+				// fmt.Printf("changing to L %d %d input: %s changed: %s \n", i, k, seat, simulated[i][k])
 			}
 		}
 	}
-
+	if changed {
+		return simulate(simulated)
+	}
 	return simulated
 }
 func parseInput() map[int][]string {
@@ -85,14 +97,21 @@ func main() {
 	seatmap := parseInput()
 
 	fmt.Printf("part 1\n")
-	fmt.Printf("input: \n")
-	for i := 0; i < len(seatmap); i++ {
-		fmt.Printf("%v\n", seatmap[i])
-	}
+	// fmt.Printf("input: \n")
+	// for i := 0; i < len(seatmap); i++ {
+	// 	fmt.Printf("%v\n", seatmap[i])
+	// }
 
-	seatmap = simulate(seatmap)
-	fmt.Printf("\n simulate: \n")
-	for i := 0; i < len(seatmap); i++ {
-		fmt.Printf("%d %v\n", i, seatmap[i])
+	simulated := simulate(seatmap)
+	fmt.Printf("\n 1. simulate: \n")
+	count := 0
+	for i := 0; i < len(simulated); i++ {
+		fmt.Printf("%d %v\n", i, simulated[i])
+		for _, seat := range simulated[i] {
+			if seat == "#" {
+				count++
+			}
+		}
 	}
+	fmt.Printf("occupied: %d\n", count)
 }
