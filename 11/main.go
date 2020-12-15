@@ -37,9 +37,9 @@ func simulate(seatmap map[int][]string) map[int][]string {
 	jsonStr, _ := json.Marshal(seatmap)
 	json.Unmarshal(jsonStr, &simulated)
 
-	fmt.Printf("\ninput: \n")
+	// fmt.Printf("\ninput: \n")
 	for i := 0; i < len(seatmap); i++ {
-		fmt.Printf("%d %v\n", i, seatmap[i])
+		// fmt.Printf("%d %v\n", i, seatmap[i])
 	}
 
 	for i, row := range seatmap {
@@ -65,7 +65,7 @@ func simulate(seatmap map[int][]string) map[int][]string {
 	return simulated
 }
 func parseInput() map[int][]string {
-	file, err := os.Open("tiny.txt")
+	file, err := os.Open("input.txt")
 	var seatmap = make(map[int][]string)
 
 	if err != nil {
