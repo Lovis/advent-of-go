@@ -18,6 +18,62 @@ type coordinates struct {
 	direction int
 }
 
+func part2(instructions []NavigationInstruction) int {
+	waypoint := coordinates{east: 10, north: 1, direction: 0}
+	position := coordinates{east: 0, north: 0, direction: 0}
+
+	for _, ins := range instructions {
+		switch ins.instruction {
+		case string('N'):
+			waypoint.north += ins.value
+		case string('S'):
+			waypoint.north -= ins.value
+		case string('E'):
+			waypoint.east += ins.value
+		case string('W'):
+			waypoint.east -= ins.value
+		case string('F'):
+			position.east += ins.value * waypoint.east   // - position.east)
+			position.north += ins.value * waypoint.north //- position.north)
+			// waypoint.east = position.east + waypoint.east - position.east
+			// waypoint.north = position.north + waypoint.north - position.north
+		case string('L'):
+			// look at east and north
+			movement := ins.value / 90
+			switch movement {
+			case 1:
+				waypoint.east -= position.east
+			case 2:
+				waypoint.east -= position.east
+				waypoint.north -= position.north
+			case 3:
+				waypoint.north -= position.east
+			}
+		case string('R'):
+			movement := ins.value / 90
+			switch movement {
+			case 1:
+				waypoint.north -= position.east
+			case 2:
+				waypoint.east -= position.east
+				waypoint.north -= position.north
+			case 3:
+				waypoint.east -= position.east
+			}
+		}
+		fmt.Printf("ins %v, waypoint %v, position %v\n", ins, waypoint, position)
+	}
+
+	if waypoint.east < 0 {
+		waypoint.east = -waypoint.east
+	}
+	if waypoint.north < 0 {
+		waypoint.north = -waypoint.north
+	}
+	fmt.Printf("waypoint: %v\n", waypoint)
+	return (waypoint.east + waypoint.north)
+}
+
 func part1(instructions []NavigationInstruction) int {
 	position := coordinates{east: 0, north: 0, direction: 0}
 
@@ -65,7 +121,7 @@ func part1(instructions []NavigationInstruction) int {
 }
 
 func parseInput() []NavigationInstruction {
-	file, err := os.Open("input.txt")
+	file, err := os.Open("tiny.txt")
 	var instructions []NavigationInstruction
 
 	if err != nil {
@@ -96,6 +152,6 @@ func main() {
 
 	instructions := parseInput()
 
-	res := part1(instructions)
-	fmt.Printf("part 1: %v\n", res)
+	// fmt.Printf("part 1: %v\n", part1(instructions))
+	fmt.Printf("part 2: %v\n", part2(instructions))
 }
