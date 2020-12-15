@@ -42,36 +42,44 @@ func part2(instructions []NavigationInstruction) int {
 			movement := ins.value / 90
 			switch movement {
 			case 1:
-				waypoint.east -= position.east
+				east := waypoint.east
+				waypoint.east = -waypoint.north
+				waypoint.north = east
 			case 2:
-				waypoint.east -= position.east
-				waypoint.north -= position.north
+				waypoint.north = -waypoint.north
+				waypoint.east = -waypoint.east
 			case 3:
-				waypoint.north -= position.east
+				north := waypoint.north
+				waypoint.north = -waypoint.east
+				waypoint.east = north
 			}
 		case string('R'):
 			movement := ins.value / 90
 			switch movement {
 			case 1:
-				waypoint.north -= position.east
+				north := waypoint.north
+				waypoint.north = -waypoint.east
+				waypoint.east = north
 			case 2:
-				waypoint.east -= position.east
-				waypoint.north -= position.north
+				waypoint.north = -waypoint.north
+				waypoint.east = -waypoint.east
 			case 3:
-				waypoint.east -= position.east
+				east := waypoint.east
+				waypoint.east = -waypoint.north
+				waypoint.north = east
 			}
 		}
 		fmt.Printf("ins %v, waypoint %v, position %v\n", ins, waypoint, position)
 	}
 
-	if waypoint.east < 0 {
-		waypoint.east = -waypoint.east
+	if position.east < 0 {
+		position.east = -position.east
 	}
-	if waypoint.north < 0 {
-		waypoint.north = -waypoint.north
+	if position.north < 0 {
+		position.north = -position.north
 	}
-	fmt.Printf("waypoint: %v\n", waypoint)
-	return (waypoint.east + waypoint.north)
+	fmt.Printf("position: %v\n", position)
+	return (position.east + position.north)
 }
 
 func part1(instructions []NavigationInstruction) int {
@@ -121,7 +129,7 @@ func part1(instructions []NavigationInstruction) int {
 }
 
 func parseInput() []NavigationInstruction {
-	file, err := os.Open("tiny.txt")
+	file, err := os.Open("input.txt")
 	var instructions []NavigationInstruction
 
 	if err != nil {
