@@ -65,7 +65,7 @@ func part1(instructions []NavigationInstruction) int {
 }
 
 func parseInput() []NavigationInstruction {
-	file, err := os.Open("tiny.txt")
+	file, err := os.Open("input.txt")
 	var instructions []NavigationInstruction
 
 	if err != nil {
@@ -95,7 +95,6 @@ func main() {
 	fmt.Printf("Day 12\n")
 
 	instructions := parseInput()
-	fmt.Printf("input: %v\n", instructions)
 
 	res := part1(instructions)
 	fmt.Printf("part 1: %v\n", res)
