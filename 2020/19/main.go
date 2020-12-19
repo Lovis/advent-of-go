@@ -8,11 +8,11 @@ import (
 	"strings"
 )
 
-// try this
+// Rule: one to rule them all.
 type Rule struct {
 	index       int
 	instruction string
-	transcribed []string
+	parsed      string
 }
 
 var rules = make(map[int]Rule)
@@ -20,39 +20,37 @@ var input []string
 
 func getRule(rule int) []string {
 	fmt.Printf("-- rule: %d\n", rule)
-	var pattern []string
+	var pattern []string = nil
+	var curr = rules[rule]
 
-	// handle sub
-	subrules := strings.Split(rules[rule].instruction, " | ")
-	// 0: 1 2
-	// 1: "a"
-	// 2: 1 3 | 3 1
-	// 3: "b"
-	// 0 => a + ab|ba => [a, ab|ba]
+	if len(curr.instruction) == 1 {
+		curr.parsed = curr.instruction
+		return append(pattern, curr.instruction)
+	}
+	subrules := strings.Split(curr.instruction, " | ")
+
 	var subPattern []string
 	for _, subrule := range subrules {
 		var subRulePattern = ""
 
-		// " 1 3 " => [1,3]
 		ruleSet := strings.Split(subrule, " ")
 		for _, sub := range ruleSet {
 			next, _ := strconv.Atoi(sub)
-			if len(rules[next].instruction) == 1 {
-				// assume a single character
-				subRulePattern += rules[next].instruction
+			if rules[next].parsed != "" {
+				subRulePattern += rules[next].parsed
 			} else {
 				nextRule := getRule(next)
-				fmt.Printf("subrule [%s], length: %d\n", nextRule, len(nextRule))
-				subRulePattern += ("(" + strings.Join(nextRule, "|") + ")")
-				fmt.Printf("done w sub rule pattern %v\n", subRulePattern)
+				fmt.Printf("got fresh  %v\n", nextRule)
+				parsed := rules[next]
+				parsed.parsed = strings.Join(nextRule, "|")
+				rules[next] = parsed
+				subRulePattern += strings.Join(nextRule, " ")
 			}
 		}
-		subPattern = append(subPattern, subRulePattern)
-		// fmt.Printf("unjoined subpattern %v \n", subPattern)
+		subPattern = append(subPattern, " "+subRulePattern)
+		pattern = append(pattern, strings.Join(subPattern, "|"))
+		subPattern = nil
 	}
-	fmt.Printf("joining subpattern %v, pattern %v\n", subPattern, pattern)
-	pattern = append(pattern, strings.Join(subPattern, "|"))
-	subPattern = nil
 
 	fmt.Printf("pattern len(%d) %v\n", len(pattern), pattern)
 	return pattern
@@ -72,9 +70,7 @@ func parseInput() {
 		s := scanner.Text()
 
 		if s == "" {
-			// switch to input
 			cursor = "input"
-			fmt.Printf("switching to %s\n", cursor)
 			continue
 		}
 
@@ -98,8 +94,12 @@ func main() {
 	parseInput()
 	fmt.Printf("parsed input %v\n parsed rules: \n", input)
 	for key, value := range rules {
-		fmt.Printf("[%d]: %v\n", key, value)
-
+		fmt.Printf("[%d]: %v\n", key, value.instruction)
 	}
-	fmt.Printf("getRule(5) %s\n", getRule(0))
+	fmt.Printf("res2 %v\n", getRule(0))
+
+	fmt.Printf("parsed rules: \n")
+	for key, value := range rules {
+		fmt.Printf("[%d]: ins: %s parsed: %v\n", key, value.instruction, value.parsed)
+	}
 }
