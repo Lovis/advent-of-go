@@ -11,6 +11,10 @@ import (
 var rules = make(map[int]string)
 var input []string
 
+func testInput(s string) bool {
+	for 
+}
+
 func parseInput() {
 	file, err := os.Open("tiny.txt")
 	if err != nil {
