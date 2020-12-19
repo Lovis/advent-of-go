@@ -11,31 +11,42 @@ import (
 var rules = make(map[int]string)
 var input []string
 
-func getRule(rule int) string {
-	fmt.Printf("get rule: %d len(%d)\n", rule, len(rules[rule]))
-	var subs []string
-	if len(rules[rule]) == 1 {
-		// assume a single character
-		fmt.Printf("got char; returning\n")
-		return rules[rule]
-	}
+func getRule(rule int) []string {
+	fmt.Printf("-- rule: %d\n", rule)
+	var pattern []string
+
 	// handle sub
 	subrules := strings.Split(rules[rule], " | ")
 	// 0: 1 2
 	// 1: "a"
 	// 2: 1 3 | 3 1
 	// 3: "b"
-	// 0 => a + ab|ba => aab | aba
-	for i, subrule := range subrules {
-		subs = append(subs, "")
+	// 0 => a + ab|ba => [a, ab|ba]
+	var subPattern []string
+	for _, subrule := range subrules {
+		var subRulePattern = ""
+
+		// " 1 3 " => [1,3]
 		ruleSet := strings.Split(subrule, " ")
-		for _, subsub := range ruleSet {
-			fmt.Printf("subrule %d: subsub [%s]\n", i, subsub)
-			next, _ := strconv.Atoi(subsub)
-			subs[i] += getRule(next)
+		for _, sub := range ruleSet {
+			next, _ := strconv.Atoi(sub)
+			if len(rules[next]) == 1 {
+				// assume a single character
+				subRulePattern += rules[next]
+			} else {
+				nextRule := getRule(next)
+				fmt.Printf("subrule [%s], length: %d\n", nextRule, len(nextRule))
+				subRulePattern += strings.Join(nextRule, "|")
+			}
 		}
+		subPattern = append(subPattern, subRulePattern)
+		fmt.Printf("unjoined subpattern %v \n", subPattern)
+		pattern = append(pattern, strings.Join(subPattern, "|"))
+		subPattern = nil
 	}
-	return strings.Join(subs, "|")
+
+	fmt.Printf("pattern len(%d) %v\n", len(pattern), pattern)
+	return pattern
 }
 
 func parseInput() {
@@ -61,7 +72,6 @@ func parseInput() {
 		switch cursor {
 		case "rules":
 			parts := strings.Split(s, ": ")
-			fmt.Printf("parts: %v\n", parts)
 			index, _ := strconv.Atoi(parts[0])
 			rules[index] = strings.Trim(parts[1], "\"")
 		case "input":
@@ -76,10 +86,8 @@ func main() {
 	parseInput()
 	fmt.Printf("parsed input %v\n parsed rules: \n", input)
 	for key, value := range rules {
-		fmt.Printf("[%d]: %s, len(%d)\n", key, value, len(value))
+		fmt.Printf("[%d]: %s\n", key, value)
 
 	}
-
-	// fmt.Printf("len(rules[5]): %d\n", len(rules[5]))
-	fmt.Printf("getRule(5) %s\n", getRule(3))
+	fmt.Printf("getRule(5) %s\n", getRule(0))
 }
