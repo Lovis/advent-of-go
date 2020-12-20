@@ -12,11 +12,49 @@ var notes = make(map[string][]int)
 var yourticket []int
 var tickets [][]int
 
+var valid = make(map[string]map[int]int)
+var solution = make(map[int]string)
+var possibles = make(map[int][]string)
+var options = make(map[string][]int)
+
+func applyPossibles() {
+
+	// row: [0 1 2], seat: [2]
+	for name, posList := range options {
+		var relevant []int
+		// then, check array
+		for _, pos := range posList {
+			if solution[pos] == "" {
+				relevant = append(relevant, pos)
+			}
+		}
+		if len(relevant) == 1 {
+			solution[relevant[0]] = name
+			fmt.Printf("inserting: %v\n", solution)
+		}
+	}
+	if len(solution) == len(notes) {
+		return
+	}
+	applyPossibles()
+}
+func setSolutionInitial() {
+	for name, valids := range valid {
+		var cols []int
+		for key, value := range valids {
+			if value == len(tickets) {
+				cols = append(cols, key)
+			}
+		}
+		options[name] = cols
+	}
+	applyPossibles()
+	fmt.Printf("options %v\n", options)
+}
+
 func part2() int {
-	var valid = make(map[string]map[int]int)
 	for _, ticket := range tickets {
 		// GOAL: "class": [1,2]
-		var usedNumbers = make(map[int]bool)
 		for index, number := range ticket {
 			for name, rule := range notes {
 				nameKey := valid[name]
@@ -28,7 +66,6 @@ func part2() int {
 					nameIndex := nameKey[index]
 					nameIndex++
 					nameKey[index] = nameIndex
-					usedNumbers[number] = true
 				}
 				valid[name] = nameKey
 			}
@@ -36,34 +73,8 @@ func part2() int {
 	}
 
 	fmt.Printf("valid: %v\n", valid)
-
-	var solution = make(map[int]string)
-	var possibles = make(map[int][]string)
-	for name, valids := range valid {
-		// "class": [0: 3, 1: 2, 2: 3]
-		var possibleColumns []int
-		for key, value := range valids {
-			if value == len(tickets) {
-				possibleColumns = append(possibleColumns, key)
-			}
-		}
-		if len(possibleColumns) == 1 {
-			solution[possibleColumns[0]] = name
-		} else {
-			fmt.Printf("more than 1 possible %s %v\n", name, possibleColumns)
-			for _, pos := range possibleColumns {
-				if solution[pos] != "" {
-					fmt.Printf("solution[%d] is set %s\n", pos, solution[pos])
-					continue
-				}
-				posibility := possibles[pos]
-				possibles[pos] = append(posibility, name)
-			}
-		}
-	}
-
+	setSolutionInitial()
 	fmt.Printf("solution %v\n", solution)
-	fmt.Printf("possibles %v\n", possibles)
 	return 0
 }
 
