@@ -28,15 +28,14 @@ func applyPossibles() {
 		}
 		if len(relevant) == 1 {
 			solution[relevant[0]] = name
-			fmt.Printf("inserting: %v\n", solution)
 		}
 	}
 	if len(solution) == len(notes) {
 		return
 	}
-	// applyPossibles()
+	applyPossibles()
 }
-func setSolutionInitial() {
+func setSolution() {
 	for name, valids := range valid {
 		var cols []int
 		for key, value := range valids {
@@ -47,14 +46,11 @@ func setSolutionInitial() {
 		options[name] = cols
 	}
 	applyPossibles()
-	fmt.Printf("options %v\n", options)
 }
 
 func part2() int {
 	for _, ticket := range tickets {
-		// GOAL: "class": [1,2]
 		for index, number := range ticket {
-			fmt.Printf("valid, cont.\n")
 			for name, rule := range notes {
 				nameKey := valid[name]
 				if nameKey == nil {
@@ -71,17 +67,21 @@ func part2() int {
 		}
 	}
 
-	fmt.Printf("valid: %v\n", valid)
-	setSolutionInitial()
-	fmt.Printf("solution %v\n", solution)
-	return 0
+	setSolution()
+	sum := 1
+	for index, name := range solution {
+		if strings.Contains(name, "departure") {
+			sum *= yourticket[index]
+		}
+	}
+
+	return sum
 }
 
 func part1() int {
 	sum := 0
 	var invalidIds []int
 	for index, ticket := range tickets {
-		// GOAL: "class": [1,2]
 		var valid = make(map[string][]int)
 
 		var usedNumbers = make(map[int]bool)
@@ -97,7 +97,6 @@ func part1() int {
 			}
 		}
 		if len(usedNumbers) < len(ticket) {
-			// traverse ticket
 
 			for _, number := range ticket {
 				if _, ok := usedNumbers[number]; !ok {
@@ -162,17 +161,6 @@ func parseInput() {
 			tickets = append(tickets, ticket)
 		}
 	}
-
-	fmt.Printf("\n1. notes; \n")
-	for key, value := range notes {
-		fmt.Printf("[%s]: %d \n", key, value)
-	}
-
-	fmt.Printf("\n2. your ticket; \n%v \n", yourticket)
-	fmt.Printf("\n3. nearby ticket;\n")
-	for _, ticket := range tickets {
-		fmt.Printf("%v\n", ticket)
-	}
 }
 
 func main() {
@@ -181,6 +169,6 @@ func main() {
 	parseInput()
 	res := part1()
 	fmt.Printf("Part 1: %d\n", res)
-	// res2 := part2()
-	// fmt.Printf("Part 2: %d\n", res2)
+	res2 := part2()
+	fmt.Printf("Part 2: %d\n", res2)
 }
