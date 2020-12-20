@@ -12,9 +12,65 @@ var notes = make(map[string][]int)
 var yourticket []int
 var tickets [][]int
 
-func validate() int {
-	sum := 0
+func part2() int {
+	var valid = make(map[string]map[int]int)
 	for _, ticket := range tickets {
+		// GOAL: "class": [1,2]
+		var usedNumbers = make(map[int]bool)
+		for index, number := range ticket {
+			for name, rule := range notes {
+				nameKey := valid[name]
+				if nameKey == nil {
+					nameKey = make(map[int]int)
+				}
+
+				if (number >= rule[0] && number <= rule[1]) || (number >= rule[2] && number <= rule[3]) {
+					nameIndex := nameKey[index]
+					nameIndex++
+					nameKey[index] = nameIndex
+					usedNumbers[number] = true
+				}
+				valid[name] = nameKey
+			}
+		}
+	}
+
+	fmt.Printf("valid: %v\n", valid)
+
+	var solution = make(map[int]string)
+	var possibles = make(map[int][]string)
+	for name, valids := range valid {
+		// "class": [0: 3, 1: 2, 2: 3]
+		var possibleColumns []int
+		for key, value := range valids {
+			if value == len(tickets) {
+				possibleColumns = append(possibleColumns, key)
+			}
+		}
+		if len(possibleColumns) == 1 {
+			solution[possibleColumns[0]] = name
+		} else {
+			fmt.Printf("more than 1 possible %s %v\n", name, possibleColumns)
+			for _, pos := range possibleColumns {
+				if solution[pos] != "" {
+					fmt.Printf("solution[%d] is set %s\n", pos, solution[pos])
+					continue
+				}
+				posibility := possibles[pos]
+				possibles[pos] = append(posibility, name)
+			}
+		}
+	}
+
+	fmt.Printf("solution %v\n", solution)
+	fmt.Printf("possibles %v\n", possibles)
+	return 0
+}
+
+func part1() int {
+	sum := 0
+	var idsToRemove []int
+	for index, ticket := range tickets {
 		// GOAL: "class": [1,2]
 		var valid = make(map[string][]int)
 
@@ -32,18 +88,21 @@ func validate() int {
 		}
 		if len(usedNumbers) < len(ticket) {
 			// traverse ticket
+
 			for _, number := range ticket {
 				if _, ok := usedNumbers[number]; !ok {
+					idsToRemove = append(idsToRemove, index)
 					sum += number
 				}
 			}
 		}
 	}
+	fmt.Printf("ids to remove: %v\n", idsToRemove)
 	return sum
 }
 
 func parseInput() {
-	file, err := os.Open("input.txt")
+	file, err := os.Open("tiny2.txt")
 	if err != nil {
 		fmt.Printf("error opening file\n")
 	}
@@ -106,6 +165,9 @@ func main() {
 	fmt.Printf("hello, day 16\n")
 
 	parseInput()
-	res := validate()
-	fmt.Printf("validate: %d\n", res)
+	// res := part1()
+	// fmt.Printf("Part 1: %d\n", res)
+
+	res := part2()
+	fmt.Printf("Part 2: %d\n", res)
 }
