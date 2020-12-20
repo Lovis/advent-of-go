@@ -43,7 +43,7 @@ func validate() int {
 }
 
 func parseInput() {
-	file, err := os.Open("tiny.txt")
+	file, err := os.Open("input.txt")
 	if err != nil {
 		fmt.Printf("error opening file\n")
 	}
