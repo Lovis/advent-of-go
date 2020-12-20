@@ -14,11 +14,9 @@ var tickets [][]int
 
 var valid = make(map[string]map[int]int)
 var solution = make(map[int]string)
-var possibles = make(map[int][]string)
 var options = make(map[string][]int)
 
 func applyPossibles() {
-
 	// row: [0 1 2], seat: [2]
 	for name, posList := range options {
 		var relevant []int
@@ -36,7 +34,7 @@ func applyPossibles() {
 	if len(solution) == len(notes) {
 		return
 	}
-	applyPossibles()
+	// applyPossibles()
 }
 func setSolutionInitial() {
 	for name, valids := range valid {
@@ -56,6 +54,7 @@ func part2() int {
 	for _, ticket := range tickets {
 		// GOAL: "class": [1,2]
 		for index, number := range ticket {
+			fmt.Printf("valid, cont.\n")
 			for name, rule := range notes {
 				nameKey := valid[name]
 				if nameKey == nil {
@@ -80,7 +79,7 @@ func part2() int {
 
 func part1() int {
 	sum := 0
-	var idsToRemove []int
+	var invalidIds []int
 	for index, ticket := range tickets {
 		// GOAL: "class": [1,2]
 		var valid = make(map[string][]int)
@@ -102,18 +101,22 @@ func part1() int {
 
 			for _, number := range ticket {
 				if _, ok := usedNumbers[number]; !ok {
-					idsToRemove = append(idsToRemove, index)
+					invalidIds = append([]int{index}, invalidIds...)
 					sum += number
 				}
 			}
 		}
 	}
-	fmt.Printf("ids to remove: %v\n", idsToRemove)
+
+	// delete invalid tickets
+	for _, inv := range invalidIds {
+		tickets = append(tickets[:inv], tickets[inv+1:]...)
+	}
 	return sum
 }
 
 func parseInput() {
-	file, err := os.Open("tiny2.txt")
+	file, err := os.Open("input.txt")
 	if err != nil {
 		fmt.Printf("error opening file\n")
 	}
@@ -176,9 +179,8 @@ func main() {
 	fmt.Printf("hello, day 16\n")
 
 	parseInput()
-	// res := part1()
-	// fmt.Printf("Part 1: %d\n", res)
-
-	res := part2()
-	fmt.Printf("Part 2: %d\n", res)
+	res := part1()
+	fmt.Printf("Part 1: %d\n", res)
+	// res2 := part2()
+	// fmt.Printf("Part 2: %d\n", res2)
 }
